@@ -1,0 +1,8 @@
+{
+    "servers": [
+        {"name": "本地服务器", "url": "http://localhost:5000"},
+        {"name": "测试服务器", "url": "http://192.168.1.100:5000"}
+    ],
+    "max_message_length": 500,
+    "max_username_length": 20
+}

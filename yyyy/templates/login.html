@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yyyy智能聊天室 - 登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #667eea;
+            font-size: 24px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .loading {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 25px;
+                margin: 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>yyyy智能聊天室</h1>
+        <div class="input-group">
+            <label for="username">昵称</label>
+            <input type="text" id="username" placeholder="请输入您的昵称" maxlength="20" autofocus>
+        </div>
+        <div class="input-group">
+            <label for="server">服务器地址</label>
+            <select id="server">
+                <!-- 动态加载服务器列表 -->
+            </select>
+        </div>
+        <button id="loginBtn">登录</button>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+    
+    <script>
+        // 获取配置信息
+        fetch('/config')
+            .then(response => response.json())
+            .then(data => {
+                const serverSelect = document.getElementById('server');
+                data.servers.forEach(server => {
+                    const option = document.createElement('option');
+                    option.value = server.url;
+                    option.textContent = server.name;
+                    serverSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error('加载配置失败:', error);
+                const serverSelect = document.getElementById('server');
+                const defaultOption = document.createElement('option');
+                defaultOption.value = 'http://localhost:5000';
+                defaultOption.textContent = '本地服务器';
+                serverSelect.appendChild(defaultOption);
+            });
+        
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+        
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const serverUrl = document.getElementById('server').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // 验证输入
+            if (!username) {
+                errorMessage.textContent = '请输入昵称';
+                return;
+            }
+            
+            if (username.length > 20) {
+                errorMessage.textContent = '昵称长度不能超过20个字符';
+                return;
+            }
+            
+            // 检查用户名是否已存在
+            loginBtn.disabled = true;
+            loginBtn.classList.add('loading');
+            errorMessage.textContent = '';
+            
+            fetch('/check_username', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: username })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    errorMessage.textContent = '该昵称已被使用，请选择其他昵称';
+                    loginBtn.disabled = false;
+                    loginBtn.classList.remove('loading');
+                } else {
+                    // 保存用户名并跳转到聊天页面
+                    localStorage.setItem('chat_username', username);
+                    localStorage.setItem('chat_server', serverUrl);
+                    window.location.href = '/chat';
+                }
+            })
+            .catch(error => {
+                console.error('检查用户名失败:', error);
+                errorMessage.textContent = '连接服务器失败，请稍后重试';
+                loginBtn.disabled = false;
+                loginBtn.classList.remove('loading');
+            });
+        }
+    </script>
+</body>
+</html>
