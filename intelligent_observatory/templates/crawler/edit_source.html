@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}编辑数据源{% endblock %}
+
+{% block content %}
+    <h1>编辑数据源</h1>
+    <hr>
+    
+    <form method="POST" action="{{ url_for('crawler.edit_source', source_id=source.id) }}">
+        <div class="mb-3">
+            <label for="name" class="form-label">数据源名称</label>
+            <input type="text" class="form-control" id="name" name="name" value="{{ source.name }}" required autofocus>
+            <small class="form-text text-muted">请输入数据源的名称，用于标识该数据源</small>
+        </div>
+        
+        <div class="mb-3">
+            <label for="type" class="form-label">数据源类型</label>
+            <select class="form-select" id="type" name="type" required>
+                <option value="web" {% if source.type == 'web' %}selected{% endif %}>网页(Web)</option>
+                <option value="api" {% if source.type == 'api' %}selected{% endif %}>API接口</option>
+                <option value="file" {% if source.type == 'file' %}selected{% endif %}>本地文件</option>
+            </select>
+            <small class="form-text text-muted">选择数据源的类型</small>
+        </div>
+        
+        <div class="mb-3">
+            <label for="url" class="form-label">URL/文件路径</label>
+            <input type="text" class="form-control" id="url" name="url" value="{{ source.url }}">
+            <small class="form-text text-muted">
+                根据数据源类型填写：
+                <ul class="list-unstyled mb-0">
+                    <li>网页：填写网页URL，如 https://example.com</li>
+                    <li>API：填写API接口URL，如 https://api.example.com/data</li>
+                    <li>文件：填写文件路径，如 D:/data.csv 或 ./data.json</li>
+                </ul>
+            </small>
+        </div>
+        
+        <div class="mb-3">
+            <label for="config" class="form-label">配置(JSON格式)</label>
+            <textarea class="form-control" id="config" name="config" rows="10">{{ source.config }}</textarea>
+            <small class="form-text text-muted">
+                根据数据源类型填写配置：
+                <ul class="list-unstyled mb-0">
+                    <li>网页爬虫：selector(选择器), title_selector(标题选择器), content_selector(内容选择器)</li>
+                    <li>API接口：method(请求方法), headers(请求头), params(请求参数), data(请求数据), items_key(数据路径)</li>
+                    <li>文件：file_type(文件类型), title_column(标题列), content_column(内容列)</li>
+                </ul>
+            </small>
+        </div>
+        
+        <div class="d-flex">
+            <button type="submit" class="btn btn-primary mr-2">保存</button>
+            <a href="{{ url_for('crawler.index') }}" class="btn btn-secondary">取消</a>
+        </div>
+    </form>
+{% endblock %}

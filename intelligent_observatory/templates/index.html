@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}首页{% endblock %}
+
+{% block content %}
+    <div class="jumbotron mt-4">
+        <h1 class="display-4">欢迎使用智能瞭望系统</h1>
+        <p class="lead">一个功能强大的数据采集、存储和分析平台，帮助您从多源数据中获取洞察。</p>
+        <hr class="my-4">
+        <p>系统支持多种数据源的抓取，包括网页、API接口和本地文件，提供强大的数据分析和可视化功能。</p>
+        <div class="mt-4">
+            {% if not current_user.is_authenticated %}
+            <a class="btn btn-primary btn-lg mr-2" href="{{ url_for('auth.login') }}" role="button">登录</a>
+            <a class="btn btn-secondary btn-lg" href="{{ url_for('auth.register') }}" role="button">注册</a>
+            {% else %}
+            <a class="btn btn-primary btn-lg" href="{{ url_for('dashboard.index') }}" role="button">进入仪表盘</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-download" aria-hidden="true"></i> 多源数据抓取</h5>
+                    <p class="card-text">支持网页爬虫、API接口调用和本地文件导入，轻松获取各种数据源的数据。</p>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('crawler.index') }}" class="btn btn-primary">了解更多</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-database" aria-hidden="true"></i> 数据存储管理</h5>
+                    <p class="card-text">提供MySQL数据库和CSV文件存储方式，确保数据安全可靠。</p>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('dashboard.index') }}" class="btn btn-primary">了解更多</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-bar-chart" aria-hidden="true"></i> 数据分析挖掘</h5>
+                    <p class="card-text">使用Python和AI工具进行数据清洗、分析和可视化，发现数据中的价值。</p>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('analyzer.index') }}" class="btn btn-primary">了解更多</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h2>系统特点</h2>
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <ul class="list-unstyled">
+                    <li class="media mt-3">
+                        <i class="fa fa-shield fa-2x mr-3 text-primary" aria-hidden="true"></i>
+                        <div class="media-body">
+                            <h5 class="mt-0">安全可靠</h5>
+                            用户认证系统确保只有授权用户才能访问系统和数据。
+                        </div>
+                    </li>
+                    <li class="media mt-3">
+                        <i class="fa fa-cogs fa-2x mr-3 text-primary" aria-hidden="true"></i>
+                        <div class="media-body">
+                            <h5 class="mt-0">灵活配置</h5>
+                            支持多种数据源类型和配置选项，满足不同的数据采集需求。
+                        </div>
+                    </li>
+                    <li class="media mt-3">
+                        <i class="fa fa-line-chart fa-2x mr-3 text-primary" aria-hidden="true"></i>
+                        <div class="media-body">
+                            <h5 class="mt-0">智能分析</h5>
+                            内置多种数据分析算法和可视化工具，快速获取数据洞察。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="list-unstyled">
+                    <li class="media mt-3">
+                        <i class="fa fa-cloud fa-2x mr-3 text-primary" aria-hidden="true"></i>
+                        <div class="media-body">
+                            <h5 class="mt-0">云友好</h5>
+                            支持云端部署和大数据处理，可扩展到企业级应用。
+                        </div>
+                    </li>
+                    <li class="media mt-3">
+                        <i class="fa fa-file-text-o fa-2x mr-3 text-primary" aria-hidden="true"></i>
+                        <div class="media-body">
+                            <h5 class="mt-0">开放API</h5>
+                            提供RESTful API接口，方便与其他系统集成。
+                        </div>
+                    </li>
+                    <li class="media mt-3">
+                        <i class="fa fa-users fa-2x mr-3 text-primary" aria-hidden="true"></i>
+                        <div class="media-body">
+                            <h5 class="mt-0">团队协作</h5>
+                            支持多用户协作，共享数据和分析结果。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

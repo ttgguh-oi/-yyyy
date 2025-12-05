@@ -1,0 +1,11 @@
+flask
+flask-login
+flask-sqlalchemy
+mysqlclient
+pandas
+scikit-learn
+requests
+beautifulsoup4
+python-dotenv
+matplotlib
+seaborn
